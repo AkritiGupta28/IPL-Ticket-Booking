@@ -1,4 +1,5 @@
 function showToast(message) {
+
     let toast = document.getElementById("toast");
 
     if (!toast) {
@@ -18,215 +19,256 @@ function showToast(message) {
 }
 
 document.querySelectorAll('a[href*="#"]').forEach(function (link) {
+
     link.addEventListener("click", function (event) {
+
         const url = new URL(link.href, window.location.href);
 
         if (url.pathname === window.location.pathname && url.hash) {
-            const target = document.getElementById(
-                decodeURIComponent(url.hash.substring(1))
-            );
+
+            const target = document.querySelector(url.hash);
 
             if (target) {
+
                 event.preventDefault();
 
                 target.scrollIntoView({
                     behavior: "smooth",
                     block: "start"
                 });
+
             }
         }
     });
 });
 
 window.addEventListener("load", function () {
+
     if (window.location.hash === "#booking") {
-        const bookingSection = document.getElementById("booking");
+
+        const bookingSection =
+            document.getElementById("booking");
 
         if (bookingSection) {
+
             bookingSection.scrollIntoView({
                 behavior: "smooth",
                 block: "start"
             });
 
-            showToast("Welcome! You can book your IPL tickets now.");
+            showToast(
+                "Welcome! You can book your IPL tickets now."
+            );
         }
     }
 });
 
-const bookingForm = document.querySelector("#booking form");
+const bookingForm = document.getElementById("bookingForm");
 
-if (bookingForm) {
-    let currentTooltip = null;
-
-    function removeValidationTooltip() {
-        if (currentTooltip) {
-            currentTooltip.remove();
-            currentTooltip = null;
-        }
-    }
-
-    function showValidationTooltip(field) {
-        removeValidationTooltip();
-
-        const tooltip = document.createElement("span");
-        tooltip.className = "validation-tooltip";
-        tooltip.setAttribute("role", "alert");
-        tooltip.textContent = field.validationMessage;
-
-        let wrapper = field.closest(".validation-wrapper");
-
-        if (!wrapper) {
-            wrapper = document.createElement("span");
-            wrapper.className = "validation-wrapper";
-
-            field.parentNode.insertBefore(wrapper, field);
-            wrapper.appendChild(field);
-        }
-
-        wrapper.appendChild(tooltip);
-        currentTooltip = tooltip;
-
-        field.focus();
-    }
-
-    bookingForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-
-        removeValidationTooltip();
-
-        if (!bookingForm.checkValidity()) {
-            const invalidField = bookingForm.querySelector(":invalid");
-
-            if (invalidField) {
-                showValidationTooltip(invalidField);
-            }
-
-            return;
-        }
-
-        showToast(
-            "Order accepted! Your IPL ticket booking has been submitted successfully."
-        );
-
-        bookingForm.reset();
-    });
-
-    bookingForm.addEventListener("input", function () {
-        removeValidationTooltip();
-    });
-
-    bookingForm.addEventListener("change", function () {
-        removeValidationTooltip();
-    });
-
-    bookingForm.addEventListener("reset", function () {
-        removeValidationTooltip();
-    });
-}
-// Activity 7: Live Booking Summary
-
-const ticketPrices = {
-    "CSK vs MI": {
-        General: 800,
-        Premium: 1500,
-        VIP: 3000
-    },
-    "RCB vs KKR": {
-        General: 900,
-        Premium: 1800,
-        VIP: 3500
-    },
-    "MI vs RR": {
-        General: 700,
-        Premium: 1400,
-        VIP: 2800
-    },
-    "KKR vs SRH": {
-        General: 800,
-        Premium: 1600,
-        VIP: 3200
-    }
-};
-
-// Select booking form controls
 const matchSelect = document.getElementById("match");
+
 const standSelect = document.getElementById("stand");
 
-const quantityInput = document.querySelector(
-    "#quantity, #tickets"
-);
+const ticketsInput = document.getElementById("tickets");
 
-// Select booking summary elements
 const summaryMatch = document.getElementById("summaryMatch");
+
 const summaryStand = document.getElementById("summaryStand");
+
+const summaryTickets = document.getElementById("summaryTickets");
+
 const summaryPrice = document.getElementById("summaryPrice");
-const summaryQuantity = document.getElementById("summaryQuantity");
+
 const summaryTotal = document.getElementById("summaryTotal");
 
-// Update booking summary
-function updateBookingSummary(notify = true) {
+function updateBookingSummary() {
 
-    const match = matchSelect.value;
-    const stand = standSelect.value;
-    const quantity = Number(quantityInput.value);
+    if (
+        !matchSelect ||
+        !standSelect ||
+        !ticketsInput ||
+        !summaryMatch ||
+        !summaryStand ||
+        !summaryTickets ||
+        !summaryPrice ||
+        !summaryTotal
+    ) {
+        return;
+    }
+
+    const selectedMatch = matchSelect.value;
+
+    const selectedStand = standSelect.value;
+
+    const quantity = Number(ticketsInput.value);
+
+    const selectedOption =
+        standSelect.options[standSelect.selectedIndex];
+
+    const price =
+        Number(selectedOption.dataset.price) || 0;
 
     const validQuantity =
         Number.isInteger(quantity) &&
         quantity >= 1 &&
         quantity <= 10;
 
-    let price = 0;
+    const total = validQuantity
+        ? price * quantity
+        : 0;
 
-    if (match && stand && ticketPrices[match]) {
-        price = ticketPrices[match][stand] || 0;
-    }
+    summaryMatch.textContent =
+        selectedMatch || "Not Selected";
 
-    const total = price * (validQuantity ? quantity : 0);
+    summaryStand.textContent =
+        selectedStand || "Not Selected";
 
-    summaryMatch.textContent = match || "Not Selected";
-    summaryStand.textContent = stand || "Not Selected";
-    summaryPrice.textContent = "₹" + price.toLocaleString("en-IN");
-    summaryQuantity.textContent = validQuantity ? quantity : 0;
-    summaryTotal.textContent = "₹" + total.toLocaleString("en-IN");
+    summaryTickets.textContent =
+        ticketsInput.value || "Not Selected";
 
-    if (notify && match && stand && validQuantity) {
-        showToast("Booking summary updated successfully!");
-    }
+    summaryPrice.textContent = price;
+
+    summaryTotal.textContent = total;
+
 }
 
-// Add event listeners
-if (
-    matchSelect && standSelect && quantityInput &&
-    summaryMatch && summaryStand && summaryPrice &&
-    summaryQuantity && summaryTotal
-) {
+if (matchSelect && standSelect && ticketsInput) {
+
     matchSelect.addEventListener("change", function () {
+
         updateBookingSummary();
+
+        showToast("Match selection updated!");
+
     });
 
     standSelect.addEventListener("change", function () {
+
         updateBookingSummary();
+
+        showToast("Stand category updated!");
+
     });
 
-    quantityInput.addEventListener("change", function () {
+    ticketsInput.addEventListener("input", function () {
+
         updateBookingSummary();
+
     });
 
-    quantityInput.addEventListener("input", function () {
-        updateBookingSummary(false);
+    ticketsInput.addEventListener("change", function () {
+
+        updateBookingSummary();
+
+        showToast("Ticket quantity updated!");
+
     });
 
-    // Reset booking summary when form is reset
-    const liveBookingForm = document.querySelector("#booking form");
+    updateBookingSummary();
 
-    if (liveBookingForm) {
-        liveBookingForm.addEventListener("reset", function () {
+    if (bookingForm) {
+
+        bookingForm.addEventListener("reset", function () {
+
             setTimeout(function () {
-                updateBookingSummary(false);
+
+                updateBookingSummary();
+
             }, 0);
+
         });
+
     }
 
-    // Initialize booking summary
-    updateBookingSummary(false);
+}
+
+if (bookingForm) {
+
+    bookingForm.addEventListener("submit", function (event) {
+
+        event.preventDefault();
+
+        if (bookingForm.checkValidity()) {
+
+            showToast(
+                "Order accepted! Your IPL ticket booking has been submitted successfully."
+            );
+
+            bookingForm.reset();
+
+        } else {
+
+            bookingForm.reportValidity();
+
+        }
+
+    });
+
+}
+
+const menuToggle = document.getElementById("menuToggle");
+const mainNav = document.getElementById("mainNav");
+
+if (menuToggle && mainNav) {
+    menuToggle.addEventListener("click", function () {
+        mainNav.classList.toggle("active");
+
+        const isOpen = mainNav.classList.contains("active");
+        menuToggle.setAttribute("aria-expanded", isOpen);
+        menuToggle.textContent = isOpen ? "✕" : "☰";
+    });
+
+    mainNav.querySelectorAll("a").forEach(function (link) {
+        link.addEventListener("click", function () {
+            mainNav.classList.remove("active");
+            menuToggle.setAttribute("aria-expanded", "false");
+            menuToggle.textContent = "☰";
+        });
+    });
+}
+
+const teamFilter = document.getElementById("teamFilter");
+const matchContainer = document.getElementById("matchContainer");
+const noMatches = document.getElementById("noMatches");
+const gridView = document.getElementById("gridView");
+const listView = document.getElementById("listView");
+
+function filterMatches() {
+    if (!teamFilter || !matchContainer) {
+        return;
+    }
+
+    const selectedTeam = teamFilter.value;
+    const matchCards = matchContainer.querySelectorAll(".match-card");
+    let visibleCount = 0;
+
+    matchCards.forEach(function (card) {
+        const teams = card.dataset.team.split(" ");
+        const showCard = selectedTeam === "all" ||
+            teams.includes(selectedTeam);
+
+        card.hidden = !showCard;
+
+        if (showCard) {
+            visibleCount++;
+        }
+    });
+
+    if (noMatches) {
+        noMatches.hidden = visibleCount !== 0;
+    }
+}
+
+if (teamFilter) {
+    teamFilter.addEventListener("change", filterMatches);
+}
+
+if (gridView && listView && matchContainer) {
+    gridView.addEventListener("click", function () {
+        matchContainer.classList.remove("list-view");
+    });
+
+    listView.addEventListener("click", function () {
+        matchContainer.classList.add("list-view");
+    });
 }

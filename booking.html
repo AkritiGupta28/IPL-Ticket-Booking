@@ -5,49 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IPL Ticket Booking Form</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .validation-wrapper {
-            position: relative;
-            display: inline-block;
-            max-width: 100%;
-        }
-
-        .validation-tooltip {
-            position: absolute;
-            top: calc(100% + 7px);
-            left: 0;
-            z-index: 1000;
-            background: #ffffff;
-            color: #222222;
-            border: 1px solid #999999;
-            border-radius: 4px;
-            padding: 9px 12px;
-            font-size: 13px;
-            font-weight: normal;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-            white-space: nowrap;
-            max-width: 85vw;
-            white-space: normal;
-            min-width: 180px;
-        }
-
-        .validation-tooltip::before {
-            content: "";
-            position: absolute;
-            top: -7px;
-            left: 15px;
-            width: 12px;
-            height: 12px;
-            background: white;
-            border-left: 1px solid #999999;
-            border-top: 1px solid #999999;
-            transform: rotate(45deg);
-        }
-
-        .validation-tooltip[hidden] {
-            display: none;
-        }
-    </style>
 </head>
 
 <body>
@@ -65,24 +22,23 @@
     </header>
 
     <section id="booking">
+
         <h2>IPL Ticket Booking Form</h2>
 
-        <form action="#" method="get" novalidate>
+        <form id="bookingForm" action="#" method="get">
 
             <label for="name">Full Name:</label>
-            <span class="validation-wrapper">
-                <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    placeholder="Enter your full name"
-                    minlength="3"
-                    maxlength="50"
-                    pattern="[A-Za-z ]+"
-                    title="Name should contain only letters and spaces"
-                    required
-                >
-            </span>
+            <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Enter your full name"
+                minlength="3"
+                maxlength="50"
+                pattern="[A-Za-z ]+"
+                title="Name should contain only letters and spaces"
+                required
+            >
 
             <br><br>
 
@@ -113,6 +69,7 @@
             <br><br>
 
             <label for="match">Select Match:</label>
+
             <select id="match" name="match" required>
                 <option value="">-- Select Match --</option>
                 <option value="CSK vs MI">CSK vs MI</option>
@@ -124,22 +81,31 @@
             <br><br>
 
             <label for="stand">Select Stand Category:</label>
+
             <select id="stand" name="stand" required>
                 <option value="">-- Select Stand --</option>
-                <option value="General">General</option>
-                <option value="Premium">Premium</option>
-                <option value="VIP">VIP</option>
+                <option value="General" data-price="500">
+                    General - ₹500
+                </option>
+                <option value="Premium" data-price="1500">
+                    Premium - ₹1500
+                </option>
+                <option value="VIP" data-price="3000">
+                    VIP - ₹3000
+                </option>
             </select>
 
             <br><br>
 
             <label for="tickets">Number of Tickets:</label>
+
             <input
                 type="number"
                 id="tickets"
                 name="tickets"
                 min="1"
                 max="10"
+                value="1"
                 placeholder="Enter number of tickets"
                 required
             >
@@ -189,6 +155,7 @@
                     value="accepted"
                     required
                 >
+
                 <label for="terms">
                     I agree to the booking terms and conditions.
                 </label>
@@ -198,40 +165,56 @@
             <br>
 
             <button type="submit">Submit Booking</button>
+
             <button type="reset">Reset Form</button>
 
-               </form>
+        </form>
 
-        <aside id="bookingSummary">
-            <h3>Booking Summary</h3>
+        <!-- ACTIVITY 7: BOOKING SUMMARY -->
 
-            <p>Selected Match:
+        <div class="booking-summary" id="bookingSummary">
+
+            <h2>Booking Summary</h2>
+
+            <p>
+                <strong>Selected Match:</strong>
                 <span id="summaryMatch">Not Selected</span>
             </p>
 
-            <p>Stand Category:
+            <p>
+                <strong>Stand Category:</strong>
                 <span id="summaryStand">Not Selected</span>
             </p>
 
-            <p>Ticket Price:
-                <span id="summaryPrice">₹0</span>
+            <p>
+                <strong>Number of Tickets:</strong>
+                <span id="summaryTickets">1</span>
             </p>
 
-            <p>Quantity:
-                <span id="summaryQuantity">0</span>
+            <p>
+                <strong>Price Per Ticket:</strong>
+                ₹<span id="summaryPrice">0</span>
             </p>
 
-            <p>Total Amount:
-                <strong id="summaryTotal">₹0</strong>
-            </p>
-        </aside>
+            <hr>
+
+            <h3>
+                Total Amount:
+                ₹<span id="summaryTotal">0</span>
+            </h3>
+
+        </div>
 
     </section>
 
     <footer>
-        <p>&copy; 2026 IPL Ticket Booking Website. All Rights Reserved.</p>
+        <p>
+            &copy; 2026 IPL Ticket Booking Website.
+            All Rights Reserved.
+        </p>
     </footer>
 
     <script src="app.js"></script>
+
 </body>
 </html>
